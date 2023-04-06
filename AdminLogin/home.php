@@ -2,7 +2,39 @@
 session_start();
 if (isset($_SESSION['user_name'])) {
 
+	$servername = "localhost";
+	$username = "root";
+	$password = "";
+	$dbname = "busdata";
+	
+	// Create connection
+	$conn = mysqli_connect($servername, $username, $password, $dbname);
+	
+	// Check connection
+	if (!$conn) {
+		die("Connection failed: " . mysqli_connect_error());
+	}
+	
+	// Retrieve data from database
+	$sql = "SELECT * FROM mytable";
+	$result = mysqli_query($conn, $sql);
+	$data = array();
+	$sum = 0; // initialize variable for sum
+	$sum2 = 0; //Passengers
+	$sum3 = 0; //Distance
+	if (mysqli_num_rows($result) > 0) {
+	  while ($row = mysqli_fetch_assoc($result)) {
+		$data[] = $row;
+		$sum += $row['profit_per_ride'];
+		$sum2 += $row['passengers'];
+		$sum3 += $row['distance_km']; // add value of column to sum
+	  }
+	}
+	
+	mysqli_close($conn);
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -82,9 +114,9 @@ if (isset($_SESSION['user_name'])) {
 														<h5 class="card-title">Earning Prediction</h5>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">$00.00</h1>
+												<h1 class="mt-1 mb-3">Rs.00.00</h1>
 												<div class="mb-0">
-													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> 0.00% </span>
+													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -.--% </span>
 													<span class="text-muted">Since last week</span>
 												</div>
 											</div>
@@ -96,9 +128,9 @@ if (isset($_SESSION['user_name'])) {
 														<h5 class="card-title">Passengers</h5>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">000</h1>
+												<h1 class="mt-1 mb-3"><?php echo $sum2; ?></h1>
 												<div class="mb-0">
-													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 0.00% </span>
+													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> -.--% </span>
 													<span class="text-muted">Since last week</span>
 												</div>
 											</div>
@@ -112,9 +144,9 @@ if (isset($_SESSION['user_name'])) {
 														<h5 class="card-title">Earnings</h5>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">$00.00</h1>
+												<h1 class="mt-1 mb-3">Rs.<?php echo $sum; ?></h1>
 												<div class="mb-0">
-													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 0.00% </span>
+													<span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> -.--% </span>
 													<span class="text-muted">Since last week</span>
 												</div>
 											</div>
@@ -126,9 +158,9 @@ if (isset($_SESSION['user_name'])) {
 														<h5 class="card-title">Distance Traveled</h5>
 													</div>
 												</div>
-												<h1 class="mt-1 mb-3">00</h1>
+												<h1 class="mt-1 mb-3"><?php echo $sum3; ?>km</h1>
 												<div class="mb-0">
-													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> 0.00% </span>
+													<span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -.--% </span>
 													<span class="text-muted">Since last week</span>
 												</div>
 											</div>
